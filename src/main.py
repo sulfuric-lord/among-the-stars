@@ -4,6 +4,7 @@ import bg_stars as star
 import character as ch
 import items as it
 import generators as gen
+import os
 
 #Константики
 COLS = 30
@@ -18,14 +19,29 @@ STR_COL = (255, 20, 50)
 DEX_COL = (50,205,50)
 INT_COL = (0,191,255)
 EXP_COL = (255,215,0)
+item_col = (0,191,255)
+
+BASE_DIR = os.path.dirname(__file__)
+font_path = os.path.join(BASE_DIR, 'fonts', 'font.ttf')
 
 pygame.init()
 win = pygame.display.set_mode((COLS * pixel_const  + 350, ROWS * pixel_const))
 pygame.display.set_caption("Dungeon, lol")
-font = pygame.font.Font("src/fonts/font.ttf", 20)
+font = pygame.font.Font(font_path, 20)
 
 gen.start_item_generate()
 inventory = []
+
+player_can_pickup = False
+player_picking = False
+
+
+def check_map():
+    for i in default_map:
+        for j in i:
+            print(j, end="")
+        print("")
+
 
 run = True
 while run:
@@ -53,6 +69,10 @@ while run:
             elif event.key == pygame.K_LEFT:
                 if ch.player.y - 1 > 0:
                     ch.player.y -= 1
+            elif event.key == pygame.K_i:
+                if player_can_pickup:
+                    player_picking = True
+                    
             
     
     for i in range(len(current_map)):
@@ -73,17 +93,24 @@ while run:
     for i in gen.item_on_ground:
         current_map[i.x][i.y] = i
         if ch.player.x == i.x and ch.player.y == i.y:
-            i.pick_up()
-    
-    for i in range(len(current_map)):
-        for j in range(len(current_map[i])):
-            if current_map[j][i] == "#":
-                pygame.draw.rect(win, WALL_COL, (i * pixel_const, j * pixel_const, pixel_const, pixel_const))
-            elif current_map[j][i] == "@":
-                pygame.draw.rect(win, PLAYER_COL, (i * pixel_const, j * pixel_const, pixel_const, pixel_const))
-            elif current_map[j][i] in gen.item_on_ground:
-                pygame.draw.rect(win, INT_COL, (i * pixel_const, j * pixel_const, pixel_const, pixel_const))
+            item_col = (255, 0, 180)
+            player_can_pickup = True
             
+            weapon_text = [f"{i.name}", f"{i.min_dmg} - {i.max_dmg} DMG"]
+            y_text_pos = 550
+            for item in weapon_text:
+                text = font.render(item, False, (255, 255, 255))
+                win.blit(text, (COLS * pixel_const + pixel_const, y_text_pos))
+                y_text_pos += 20
+            
+            if player_picking:
+                i.pick_up()
+                player_picking = False
+                player_can_pickup = False
+        else:
+            item_col = (0,191,255)  
+                
+                   
     y_text = 20
     for item in player_stats:
         stats_col = (255, 255, 255)
@@ -101,14 +128,18 @@ while run:
         win.blit(stats_text, (COLS * pixel_const + pixel_const, y_text))
         y_text += 20
     
+    
+    #Отрисовка обьектов
+    for i in range(len(current_map)):
+        for j in range(len(current_map[i])):
+            if current_map[j][i] == "#":
+                pygame.draw.rect(win, WALL_COL, (i * pixel_const, j * pixel_const, pixel_const, pixel_const))
+            elif current_map[j][i] in gen.item_on_ground:
+                pygame.draw.rect(win, item_col, (i * pixel_const, j * pixel_const, pixel_const, pixel_const))
+    #Отрисовка Игрока:
+        for i in range(len(current_map)):
+            for j in range(len(current_map[i])):
+                if current_map[j][i] == "@":
+                    pygame.draw.rect(win, PLAYER_COL, (i * pixel_const, j * pixel_const, pixel_const, pixel_const))
+
     pygame.display.update()
-
-
-#Вывод карты на экран в виде коноли
-# def check_map():
-#     for i in default_map:
-#         for j in i:
-#             print(j, end="")
-#         print("")
-
-# check_map()

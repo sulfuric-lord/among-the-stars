@@ -1,5 +1,4 @@
 import items
-import random
 
 item_on_ground = []
 

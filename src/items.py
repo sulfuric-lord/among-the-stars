@@ -23,4 +23,4 @@ class Weapon (Item):
 #Стартовое оружие:
 hands = Weapon("Hands", 0, 0, "can_wear", 0, 2)
 
-iron_sword = Weapon("Iron sword", random.randint(1, 29), random.randint(1, 29), "can_wear", 5, 10)
+iron_sword = Weapon("Iron sword", random.randint(1, 28), random.randint(1, 28), "can_wear", 5, 10)

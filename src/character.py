@@ -12,6 +12,7 @@ class Character:
         self.exp = 0
         self.level = 1
         self.weapon = items.hands
+        
 
 player = Character(1, 1)
 
