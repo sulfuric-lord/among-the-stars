@@ -24,6 +24,8 @@ item_col = (0,191,255)
 BASE_DIR = os.path.dirname(__file__)
 font_path = os.path.join(BASE_DIR, 'fonts', 'font.ttf')
 
+steps = 0
+
 pygame.init()
 win = pygame.display.set_mode((COLS * pixel_const  + 350, ROWS * pixel_const))
 pygame.display.set_caption("Dungeon, lol")
@@ -72,6 +74,7 @@ while run:
             elif event.key == pygame.K_i:
                 if player_can_pickup:
                     player_picking = True
+        steps += 1
                     
             
     
